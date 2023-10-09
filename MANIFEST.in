@@ -1,0 +1,7 @@
+include requirements/*.txt
+include GCFNet/VERSION
+include GCFNet/.mim/model-index.yml
+include GCFNet/.mim/dataset-index.yml
+include GCFNet/.mim/demo/*/*
+recursive-include GCFNet/.mim/configs *.py *.yml
+recursive-include GCFNet/.mim/tools *.sh *.py
