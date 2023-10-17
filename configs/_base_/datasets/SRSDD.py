@@ -3,6 +3,14 @@ dataset_type = 'DOTADataset'
 data_root = 'data/SRSDD/'
 backend_args = None
 
+METAINFO = {
+        'classes':
+        ('ore-oil', 'Cell-Container', 'Fishing', 'LawEnforce', 'Dredger', 'Container'),
+        # palette is a list of color tuples, which is used for visualization.
+        'palette': [(165, 42, 42), (189, 183, 107), (0, 255, 0), (255, 0, 0),
+                    (138, 43, 226), (255, 128, 0)]
+    }
+
 train_pipeline = [
     dict(type='mmdet.LoadImageFromFile', backend_args=backend_args),
     dict(type='mmdet.LoadAnnotations', with_bbox=True, box_type='qbox'),
