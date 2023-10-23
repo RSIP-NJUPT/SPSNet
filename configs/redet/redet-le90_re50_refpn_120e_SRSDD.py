@@ -2,7 +2,7 @@ _base_ = [
     '../_base_/datasets/SRSDD.py', '../_base_/schedules/schedule_120e.py',
     '../_base_/default_runtime.py'
 ]
-pretrained = '../weight/re_resnet50_c8_batch256-25b16846.pth'
+pretrained = '../checkpoint/re_resnet50_c8_batch256-25b16846.pth'
 
 angle_version = 'le90'
 model = dict(
