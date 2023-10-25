@@ -98,9 +98,8 @@ optim_wrapper = dict(
     optimizer=dict(
         _delete_=True,
         type='AdamW',
-        lr=0.02,
+        lr=0.00005,
         betas=(0.9, 0.999),
-        weight_decay=0.001)
-    )
+        weight_decay=0.05))
 
 #train_cfg = dict(type='EpochBasedTrainLoop', max_epochs=12, val_interval=6)
