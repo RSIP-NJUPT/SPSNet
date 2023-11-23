@@ -1,6 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-from .DBA_FPN import DBAFPN
+from .dynamic_coordinate_FPN import DynamicCoordinateFPN
 
 __all__ = [
-    'DBAFPN'
+    'DynamicCoordinateFPN'
 ]

@@ -1,16 +1,16 @@
 _base_ = [
-    '../../_base_/datasets/SMCDD.py',
-    '../../_base_/schedules/schedule_3x.py',
+    '../../_base_/datasets/AIR-SARShip-1.0.py',
+    '../../_base_/schedules/schedule_6x.py',
     'mmdet::_base_/default_runtime.py'
 ]
 
-# model settings
 model = dict(
-    type='FCOS',
+    type='CenterNet',
+    # use caffe img_norm
     data_preprocessor=dict(
         type='DetDataPreprocessor',
-        mean=[106.77906797278254, 106.77906797278254, 106.77906797278254],
-        std=[97.67001816490634, 97.67001816490634, 97.67001816490634],
+        mean=[43.35241434599897, 43.35241434599897, 43.35241434599897],
+        std=[51.60430728243554, 51.60430728243554, 51.60430728243554],
         bgr_to_rgb=False,
         pad_size_divisor=32),
     backbone=dict(
@@ -28,37 +28,38 @@ model = dict(
         in_channels=[256, 512, 1024, 2048],
         out_channels=256,
         start_level=1,
-        add_extra_convs='on_output',  # use P5
+        add_extra_convs='on_output',
         num_outs=5,
+        # There is a chance to get 40.3 after switching init_cfg,
+        # otherwise it is about 39.9~40.1
+        init_cfg=dict(type='Caffe2Xavier', layer='Conv2d'),
         relu_before_extra_convs=True),
     bbox_head=dict(
-        type='FCOSHead',
-        num_classes=4,
+        type='CenterNetUpdateHead',
+        num_classes=1,
         in_channels=256,
         stacked_convs=4,
         feat_channels=256,
         strides=[8, 16, 32, 64, 128],
+        hm_min_radius=4,
+        hm_min_overlap=0.8,
+        more_pos_thresh=0.2,
+        more_pos_topk=9,
+        soft_weight_on_reg=False,
         loss_cls=dict(
-            type='FocalLoss',
-            use_sigmoid=True,
-            gamma=2.0,
-            alpha=0.25,
+            type='GaussianFocalLoss',
+            pos_weight=0.25,
+            neg_weight=0.75,
             loss_weight=1.0),
-        loss_bbox=dict(type='IoULoss', loss_weight=1.0),
-        loss_centerness=dict(
-            type='CrossEntropyLoss', use_sigmoid=True, loss_weight=1.0)),
-    # testing settings
+        loss_bbox=dict(type='GIoULoss', loss_weight=2.0),
+    ),
+    train_cfg=None,
     test_cfg=dict(
         nms_pre=1000,
         min_bbox_size=0,
         score_thr=0.05,
-        nms=dict(type='nms', iou_threshold=0.5),
-        max_per_img=500))
-
-# training schedule for 1x
-train_cfg = dict(type='EpochBasedTrainLoop', max_epochs=36, val_interval=1)
-val_cfg = dict(type='ValLoop')
-test_cfg = dict(type='TestLoop')
+        nms=dict(type='nms', iou_threshold=0.6),
+        max_per_img=300))
 
 # optimizer
 base_lr = 1.0
@@ -70,10 +71,3 @@ optim_wrapper = dict(
     ),
     paramwise_cfg=dict(
         norm_decay_mult=0, bias_decay_mult=0, bypass_duplicate=True))
-
-default_hooks = dict(
-    checkpoint=dict(
-        type='CheckpointHook',
-        interval=1,
-        _scope_='mmdet',
-        save_best='auto'))

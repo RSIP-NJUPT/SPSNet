@@ -1,38 +1,31 @@
 _base_ = [
-    '../../_base_/datasets/SMCDD.py',
-    '../../_base_/schedules/schedule_3x.py',
+    '../../_base_/datasets/SAR-AIRcraft-1.0.py',
+    '../../_base_/schedules/schedule_1x.py',
     'mmdet::_base_/default_runtime.py'
 ]
-
-# model settings
 model = dict(
     type='RetinaNet',
     data_preprocessor=dict(
         type='DetDataPreprocessor',
-        mean=[106.77906797278254, 106.77906797278254, 106.77906797278254],
-        std=[97.67001816490634, 97.67001816490634, 97.67001816490634],
-        bgr_to_rgb=False,
+        mean=[23.736360965497262, 23.736360965497262, 23.736360965497262],
+        std=[24.685866361600155, 24.685866361600155, 24.685866361600155],
+        bgr_to_rgb=True,
         pad_size_divisor=32),
     backbone=dict(
-        type='ResNet',
-        depth=50,
-        num_stages=4,
-        out_indices=(0, 1, 2, 3),
-        frozen_stages=-1,
-        norm_cfg=dict(type='BN', requires_grad=True),
-        norm_eval=False,
-        style='pytorch',
-        init_cfg=dict(type='Pretrained', checkpoint='torchvision://resnet50')),
+        type='PyramidVisionTransformer',
+        num_layers=[2, 2, 2, 2],
+        init_cfg=dict(checkpoint='https://github.com/whai362/PVT/'
+                      'releases/download/v2/pvt_tiny.pth')),
     neck=dict(
         type='FPN',
-        in_channels=[256, 512, 1024, 2048],
+        in_channels=[64, 128, 320, 512],
         out_channels=256,
         start_level=1,
         add_extra_convs='on_input',
         num_outs=5),
     bbox_head=dict(
         type='RetinaHead',
-        num_classes=4,
+        num_classes=7,
         in_channels=256,
         stacked_convs=4,
         feat_channels=256,
@@ -71,23 +64,8 @@ model = dict(
         min_bbox_size=0,
         score_thr=0.05,
         nms=dict(type='nms', iou_threshold=0.5),
-        max_per_img=100))
-
-
+        max_per_img=300))
 # optimizer
-base_lr = 1.0
 optim_wrapper = dict(
-    _delete_=True,
-    type='OptimWrapper',
     optimizer=dict(
-        type='DAdaptAdam', lr=base_lr, weight_decay=0.05, decouple=True
-    ),
-    paramwise_cfg=dict(
-        norm_decay_mult=0, bias_decay_mult=0, bypass_duplicate=True))
-
-default_hooks = dict(
-    checkpoint=dict(
-        type='CheckpointHook',
-        interval=1,
-        _scope_='mmdet',
-        save_best='auto'))
+        _delete_=True, type='AdamW', lr=0.0001, weight_decay=0.0001))

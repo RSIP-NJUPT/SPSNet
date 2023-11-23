@@ -1,10 +1,16 @@
+_base_ = [
+    '../../_base_/datasets/SAR-AIRcraft-1.0.py',
+    '../../_base_/schedules/schedule_1x.py',
+    'mmdet::_base_/default_runtime.py'
+]
+
 # model settings
 model = dict(
     type='FasterRCNN',
     data_preprocessor=dict(
         type='DetDataPreprocessor',
-        mean=[106.77906797278254, 106.77906797278254, 106.77906797278254],
-        std=[97.67001816490634, 97.67001816490634, 97.67001816490634],
+        mean=[23.736360965497262, 23.736360965497262, 23.736360965497262],
+        std=[24.685866361600155, 24.685866361600155, 24.685866361600155],
         bgr_to_rgb=False,
         pad_size_divisor=32),
     backbone=dict(
@@ -50,7 +56,7 @@ model = dict(
             in_channels=256,
             fc_out_channels=1024,
             roi_feat_size=7,
-            num_classes=4,
+            num_classes=7,
             bbox_coder=dict(
                 type='DeltaXYWHBBoxCoder',
                 target_means=[0., 0., 0., 0.],
@@ -112,3 +118,21 @@ model = dict(
         # soft-nms is also supported for rcnn testing
         # e.g., nms=dict(type='soft_nms', iou_threshold=0.5, min_score=0.05)
     ))
+
+
+base_lr = 1.0
+optim_wrapper = dict(
+    _delete_=True,
+    type='OptimWrapper',
+    optimizer=dict(
+        type='DAdaptAdam', lr=base_lr, weight_decay=0.05, decouple=True
+    ),
+    paramwise_cfg=dict(
+        norm_decay_mult=0, bias_decay_mult=0, bypass_duplicate=True))
+
+default_hooks = dict(
+    checkpoint=dict(
+        type='CheckpointHook',
+        interval=1,
+        _scope_='mmdet',
+        save_best='auto'))

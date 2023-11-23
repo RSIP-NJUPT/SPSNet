@@ -1,5 +1,5 @@
 _base_ = [
-    '../../_base_/datasets/SMCDD.py',
+    '../../_base_/datasets/AIR-SARShip-1.0.py',
     'mmdet::_base_/default_runtime.py'
 ]
 model = dict(
@@ -9,8 +9,8 @@ model = dict(
     num_patterns=0,
     data_preprocessor=dict(
         type='DetDataPreprocessor',
-        mean=[106.77906797278254, 106.77906797278254, 106.77906797278254],
-        std=[97.67001816490634, 97.67001816490634, 97.67001816490634],
+        mean=[43.35241434599897, 43.35241434599897, 43.35241434599897],
+        std=[51.60430728243554, 51.60430728243554, 51.60430728243554],
         bgr_to_rgb=True,
         pad_size_divisor=1),
     backbone=dict(
@@ -70,7 +70,7 @@ model = dict(
     positional_encoding=dict(num_feats=128, temperature=20, normalize=True),
     bbox_head=dict(
         type='DABDETRHead',
-        num_classes=4,
+        num_classes=1,
         embed_dims=256,
         loss_cls=dict(
             type='FocalLoss',

@@ -1,6 +1,6 @@
 _base_ = [
-    '../../_base_/datasets/SMCDD.py',
-    '../../_base_/schedules/schedule_3x.py',
+    '../../_base_/datasets/AIR-SARShip-1.0.py',
+    '../../_base_/schedules/schedule_6x.py',
     'mmdet::_base_/default_runtime.py'
 ]
 
@@ -9,8 +9,8 @@ model = dict(
     type='RetinaNet',
     data_preprocessor=dict(
         type='DetDataPreprocessor',
-        mean=[106.77906797278254, 106.77906797278254, 106.77906797278254],
-        std=[97.67001816490634, 97.67001816490634, 97.67001816490634],
+        mean=[43.35241434599897, 43.35241434599897, 43.35241434599897],
+        std=[51.60430728243554, 51.60430728243554, 51.60430728243554],
         bgr_to_rgb=False,
         pad_size_divisor=32),
     backbone=dict(
@@ -32,7 +32,7 @@ model = dict(
         num_outs=5),
     bbox_head=dict(
         type='RetinaHead',
-        num_classes=4,
+        num_classes=1,
         in_channels=256,
         stacked_convs=4,
         feat_channels=256,

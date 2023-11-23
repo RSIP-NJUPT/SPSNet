@@ -1,17 +1,16 @@
 _base_ = [
-    '../../_base_/datasets/SMCDD.py',
-    '../../_base_/schedules/schedule_3x.py',
-    'mmdet::_base_/default_runtime.py'
+    '../../_base_/datasets/AIR-SARShip-1.0.py',
+    '../../_base_/schedules/schedule_6x.py',
+    'mmdet::_base_/default_runtime.py',
 ]
-
 # model settings
 model = dict(
-    type='FCOS',
+    type='VFNet',
     data_preprocessor=dict(
         type='DetDataPreprocessor',
-        mean=[106.77906797278254, 106.77906797278254, 106.77906797278254],
-        std=[97.67001816490634, 97.67001816490634, 97.67001816490634],
-        bgr_to_rgb=False,
+        mean=[43.35241434599897, 43.35241434599897, 43.35241434599897],
+        std=[51.60430728243554, 51.60430728243554, 51.60430728243554],
+        bgr_to_rgb=True,
         pad_size_divisor=32),
     backbone=dict(
         type='ResNet',
@@ -32,33 +31,37 @@ model = dict(
         num_outs=5,
         relu_before_extra_convs=True),
     bbox_head=dict(
-        type='FCOSHead',
-        num_classes=4,
+        type='VFNetHead',
+        num_classes=1,
         in_channels=256,
-        stacked_convs=4,
+        stacked_convs=3,
         feat_channels=256,
         strides=[8, 16, 32, 64, 128],
+        center_sampling=False,
+        dcn_on_last_conv=False,
+        use_atss=True,
+        use_vfl=True,
         loss_cls=dict(
-            type='FocalLoss',
+            type='VarifocalLoss',
             use_sigmoid=True,
+            alpha=0.75,
             gamma=2.0,
-            alpha=0.25,
+            iou_weighted=True,
             loss_weight=1.0),
-        loss_bbox=dict(type='IoULoss', loss_weight=1.0),
-        loss_centerness=dict(
-            type='CrossEntropyLoss', use_sigmoid=True, loss_weight=1.0)),
-    # testing settings
+        loss_bbox=dict(type='GIoULoss', loss_weight=1.5),
+        loss_bbox_refine=dict(type='GIoULoss', loss_weight=2.0)),
+    # training and testing settings
+    train_cfg=dict(
+        assigner=dict(type='ATSSAssigner', topk=9),
+        allowed_border=-1,
+        pos_weight=-1,
+        debug=False),
     test_cfg=dict(
         nms_pre=1000,
         min_bbox_size=0,
         score_thr=0.05,
-        nms=dict(type='nms', iou_threshold=0.5),
-        max_per_img=500))
-
-# training schedule for 1x
-train_cfg = dict(type='EpochBasedTrainLoop', max_epochs=36, val_interval=1)
-val_cfg = dict(type='ValLoop')
-test_cfg = dict(type='TestLoop')
+        nms=dict(type='nms', iou_threshold=0.6),
+        max_per_img=300))
 
 # optimizer
 base_lr = 1.0
@@ -70,10 +73,3 @@ optim_wrapper = dict(
     ),
     paramwise_cfg=dict(
         norm_decay_mult=0, bias_decay_mult=0, bypass_duplicate=True))
-
-default_hooks = dict(
-    checkpoint=dict(
-        type='CheckpointHook',
-        interval=1,
-        _scope_='mmdet',
-        save_best='auto'))

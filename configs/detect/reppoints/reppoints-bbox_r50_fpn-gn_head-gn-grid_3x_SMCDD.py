@@ -1,6 +1,6 @@
 _base_ = [
-    '../_base_/datasets/SMCDD.py',
-    '../_base_/schedules/schedule_3x.py',
+    '../../_base_/datasets/SMCDD.py',
+    '../../_base_/schedules/schedule_3x.py',
     'mmdet::_base_/default_runtime.py'
 ]
 norm_cfg = dict(type='GN', num_groups=32, requires_grad=True)
