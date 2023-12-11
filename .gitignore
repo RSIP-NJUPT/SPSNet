@@ -114,7 +114,7 @@ data
 *.pkl.json
 *.log.json
 docs/modelzoo_statistics.md
-GCFNet/.mim
+SPGNet/.mim
 work_dirs/
 
 # Pytorch

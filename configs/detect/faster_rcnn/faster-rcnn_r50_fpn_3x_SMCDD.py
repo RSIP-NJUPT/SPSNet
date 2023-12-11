@@ -1,6 +1,6 @@
 _base_ = [
-    '../../_base_/datasets/SMCDD.py',
-    '../../_base_/schedules/schedule_3x.py',
+    '../_base_/datasets/SMCDD.py',
+    '../_base_/schedules/schedule_3x.py',
     'mmdet::_base_/default_runtime.py'
 ]
 
@@ -120,6 +120,7 @@ model = dict(
     ))
 
 
+# optimizer
 base_lr = 1.0
 optim_wrapper = dict(
     _delete_=True,
@@ -133,6 +134,6 @@ optim_wrapper = dict(
 default_hooks = dict(
     checkpoint=dict(
         type='CheckpointHook',
-        interval=1,
+        interval=-1,
         _scope_='mmdet',
         save_best='auto'))

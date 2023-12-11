@@ -1,6 +1,6 @@
 _base_ = [
-    '../../_base_/datasets/AIR-SARShip-1.0.py',
-    '../../_base_/schedules/schedule_6x.py',
+    '../_base_/datasets/AIR-SARShip-1.0.py',
+    '../_base_/schedules/schedule_6x.py',
     'mmdet::_base_/default_runtime.py'
 ]
 model = dict(
@@ -65,7 +65,15 @@ model = dict(
         score_thr=0.05,
         nms=dict(type='nms', iou_threshold=0.5),
         max_per_img=300))
+
 # optimizer
 optim_wrapper = dict(
     optimizer=dict(
         _delete_=True, type='AdamW', lr=0.0001, weight_decay=0.0001))
+
+default_hooks = dict(
+    checkpoint=dict(
+        type='CheckpointHook',
+        interval=-1,
+        _scope_='mmdet',
+        save_best='auto'))

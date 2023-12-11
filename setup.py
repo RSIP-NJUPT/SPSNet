@@ -19,7 +19,7 @@ def readme():
     return content
 
 
-version_file = 'GCFNet/version.py'
+version_file = 'SPGNet/version.py'
 
 
 def get_version():
@@ -158,7 +158,7 @@ def add_mim_extension():
         'tools', 'configs', 'demo', 'model-index.yml', 'dataset-index.yml'
     ]
     repo_path = osp.dirname(__file__)
-    mim_path = osp.join(repo_path, 'GCFNet', '.mim')
+    mim_path = osp.join(repo_path, 'SPGNet', '.mim')
     os.makedirs(mim_path, exist_ok=True)
 
     for filename in filenames:
@@ -188,15 +188,15 @@ def add_mim_extension():
 if __name__ == '__main__':
     add_mim_extension()
     setup(
-        name='GCFNet',
+        name='SPGNet',
         version=get_version(),
         description='OpenMMLab Detection Toolbox and Benchmark',
         long_description=readme(),
         long_description_content_type='text/markdown',
-        author='GCFNet Contributors',
+        author='SPGNet Contributors',
         author_email='openmmlab@gmail.com',
         keywords='computer vision, object detection',
-        url='https://github.com/RSIP-NJUPT/GCFNet.git',
+        url='https://github.com/RSIP-NJUPT/SPGNet.git',
         packages=find_packages(exclude=('configs', 'tools', 'demo')),
         include_package_data=True,
         classifiers=[

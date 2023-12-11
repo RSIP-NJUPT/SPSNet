@@ -1,13 +1,13 @@
-# GCFNet
-This an official Pytorch implementation of our paper "**GCFNet: Global Attention And Class-balanced Focal Network for SAR Target Detection**".
+# SPGNet
+This an official Pytorch implementation of our paper "**SPGNet: Global Attention And Class-balanced Focal Network for SAR Target Detection**".
 
 ## Installation
 
 Step 1: Create a conda environment
 
 ```shell
-conda create --name GCFNet python=3.9
-conda activate GCFNet
+conda create --name SPGNet python=3.9
+conda activate SPGNet
 ```
 
 Step 2: Install PyTorch 2.0.0+CU118
@@ -26,9 +26,9 @@ mim install mmengine "mmcv>=2.0.0" "mmdet>=3.0.0" "mmsegmentation>=1.0.0" "mmrot
 pip install ninja --no-input
 ```
 
-Step 4: Install `GCFNet`
+Step 4: Install `SPGNet`
 
-**Note**: make sure you have `cd` to the root directory of `GCFNet`
+**Note**: make sure you have `cd` to the root directory of `SPGNet`
 
 ```shell
 python setup.py develop

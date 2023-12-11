@@ -1,8 +1,8 @@
 # We follow the original implementation which
 # adopts the Caffe pre-trained backbone.
 _base_ = [
-    '../../_base_/datasets/AIR-SARShip-1.0.py',
-    '../../_base_/schedules/schedule_6x.py',
+    '../_base_/datasets/AIR-SARShip-1.0.py',
+    '../_base_/schedules/schedule_6x.py',
     'mmdet::_base_/default_runtime.py'
 ]
 # model settings
@@ -68,6 +68,6 @@ optim_wrapper = dict(
 default_hooks = dict(
     checkpoint=dict(
         type='CheckpointHook',
-        interval=1,
+        interval=-1,
         _scope_='mmdet',
         save_best='auto'))
