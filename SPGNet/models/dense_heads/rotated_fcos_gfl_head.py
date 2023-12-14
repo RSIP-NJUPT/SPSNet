@@ -15,12 +15,10 @@ from mmengine import ConfigDict
 from mmengine.structures import InstanceData
 from torch import Tensor
 
-from SPGNet.registry import MODELS
-from SPGNet.registry import TASK_UTILS
+from SPGNet.registry import MODELS, TASK_UTILS
 from mmrotate.structures import RotatedBoxes
 from mmcv.ops import diff_iou_rotated_2d
 import torch.nn.functional as F
-from mmdet.structures.bbox import bbox_overlaps
 INF = 1e8
 
 
@@ -148,14 +146,14 @@ class RotatedFCOSGFLHead(FCOSHead):
         return cls_score, bbox_pred, angle_pred, centerness
 
     def loss_by_feat(
-            self,
-            cls_scores: List[Tensor],
-            bbox_preds: List[Tensor],
-            angle_preds: List[Tensor],
-            centernesses: List[Tensor],
-            batch_gt_instances: InstanceList,
-            batch_img_metas: List[dict],
-            batch_gt_instances_ignore: OptInstanceList = None
+        self,
+        cls_scores: List[Tensor],
+        bbox_preds: List[Tensor],
+        angle_preds: List[Tensor],
+        centernesses: List[Tensor],
+        batch_gt_instances: InstanceList,
+        batch_img_metas: List[dict],
+        batch_gt_instances_ignore: OptInstanceList = None
     ) -> Dict[str, Tensor]:
         """Calculate the loss based on the features extracted by the detection
         head.
@@ -184,7 +182,6 @@ class RotatedFCOSGFLHead(FCOSHead):
         Returns:
             dict[str, Tensor]: A dictionary of loss components.
         """
-        print(angle_preds)
         assert len(cls_scores) == len(bbox_preds) \
                == len(angle_preds) == len(centernesses)
         featmap_sizes = [featmap.size()[-2:] for featmap in cls_scores]
@@ -207,7 +204,6 @@ class RotatedFCOSGFLHead(FCOSHead):
             bbox_pred.permute(0, 2, 3, 1).reshape(-1, 4)
             for bbox_pred in bbox_preds
         ]
-        print(flatten_bbox_preds)
         angle_dim = self.angle_coder.encode_size
         flatten_angle_preds = [
             angle_pred.permute(0, 2, 3, 1).reshape(-1, angle_dim)
@@ -247,11 +243,6 @@ class RotatedFCOSGFLHead(FCOSHead):
         # centerness weighted iou loss
         centerness_denorm = max(
             reduce_mean(pos_centerness_targets.sum().detach()), 1e-6)
-        N = flatten_labels.shape[0]
-        quality_labels = torch.zeros((N,), device=flatten_labels.device)
-        # quality_labels[pos_inds]=pos_centerness_targets
-        # loss_cls=self.loss_cls(flatten_cls_scores,(flatten_labels,quality_labels),avg_factor=num_pos)
-
 
         if len(pos_inds) > 0:
             pos_points = flatten_points[pos_inds]
@@ -269,11 +260,12 @@ class RotatedFCOSGFLHead(FCOSHead):
                                                        pos_bbox_preds)
             pos_decoded_target_preds = bbox_coder.decode(
                 pos_points, pos_bbox_targets)
-
+            
+            N = flatten_labels.shape[0]
+            quality_labels = torch.zeros((N,), device=flatten_labels.device)
             eps = 1e-6
             ious = diff_iou_rotated_2d(pos_decoded_bbox_preds.unsqueeze(0), pos_decoded_target_preds.unsqueeze(0))
             ious = ious.squeeze(0).clamp(min=eps)
-            #gious = bbox_overlaps(pos_decoded_bbox_preds,pos_decoded_target_preds, mode='giou', is_aligned=True, eps=eps)
 
             quality_labels[pos_inds] = ious
             one_hot_labels = F.one_hot(flatten_labels)
@@ -315,7 +307,7 @@ class RotatedFCOSGFLHead(FCOSHead):
                 loss_centerness=loss_centerness)
 
     def get_targets(
-            self, points: List[Tensor], batch_gt_instances: InstanceList
+        self, points: List[Tensor], batch_gt_instances: InstanceList
     ) -> Tuple[List[Tensor], List[Tensor], List[Tensor]]:
         """Compute regression, classification and centerness targets for points
         in multiple images.
@@ -396,8 +388,8 @@ class RotatedFCOSGFLHead(FCOSHead):
 
         if num_gts == 0:
             return gt_labels.new_full((num_points,), self.num_classes), \
-                gt_bboxes.new_zeros((num_points, 4)), \
-                gt_bboxes.new_zeros((num_points, 1))
+                   gt_bboxes.new_zeros((num_points, 4)), \
+                   gt_bboxes.new_zeros((num_points, 1))
 
         areas = gt_bboxes.areas
         gt_bboxes = gt_bboxes.regularize_boxes(self.angle_version)
@@ -447,8 +439,8 @@ class RotatedFCOSGFLHead(FCOSHead):
         # condition2: limit the regression range for each location
         max_regress_distance = bbox_targets.max(-1)[0]
         inside_regress_range = (
-                (max_regress_distance >= regress_ranges[..., 0])
-                & (max_regress_distance <= regress_ranges[..., 1]))
+            (max_regress_distance >= regress_ranges[..., 0])
+            & (max_regress_distance <= regress_ranges[..., 1]))
 
         # if there are still more than one objects for a location,
         # we choose the one with minimal area
