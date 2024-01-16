@@ -1,0 +1,23 @@
+{
+  "nproc": 10,
+  "img_dirs": [
+    "datasets/LS-SSDD-v1.0/dota/train/images"
+  ],
+  "ann_dirs": [
+    "datasets/LS-SSDD-v1.0/dota/train/labels"
+  ],
+  "sizes": [
+    1024
+  ],
+  "gaps": [
+    200
+  ],
+  "rates": [
+    1.0
+  ],
+  "img_rate_thr": 0.6,
+  "iof_thr": 0.7,
+  "no_padding": true,
+  "save_dir": "datasets/split_LS-SSDD-v1.0/train",
+  "save_ext": ".jpg"
+}
