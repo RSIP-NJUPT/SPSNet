@@ -114,10 +114,11 @@ data
 *.pkl.json
 *.log.json
 docs/modelzoo_statistics.md
-SPGNet/.mim
+SPSNet/.mim
 work_dirs/
 
 # Pytorch
 *.pth
 *.py~
 *.sh~
+tools/datasets

@@ -1,7 +1,7 @@
 include requirements/*.txt
-include SPGNet/VERSION
-include SPGNet/.mim/model-index.yml
-include SPGNet/.mim/dataset-index.yml
-include SPGNet/.mim/demo/*/*
-recursive-include SPGNet/.mim/configs *.py *.yml
-recursive-include SPGNet/.mim/tools *.sh *.py
+include SPSNet/VERSION
+include SPSNet/.mim/model-index.yml
+include SPSNet/.mim/dataset-index.yml
+include SPSNet/.mim/demo/*/*
+recursive-include SPSNet/.mim/configs *.py *.yml
+recursive-include SPSNet/.mim/tools *.sh *.py
